@@ -11,6 +11,9 @@ use App\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+///get
+
+
 class ContestController extends Controller
 {
     public function index() {

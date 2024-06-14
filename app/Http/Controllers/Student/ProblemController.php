@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\CodeExecutorController;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProblemResource;
 use App\Models\Problem;
 use App\Models\SolveProblem;
 use Illuminate\Http\Request;
@@ -181,7 +182,7 @@ class ProblemController extends Controller
         }
     }
     public function filter(Request $request){
-        $problems = Problem::query()->with('tags') ;
+        $problems = Problem::query()->with('tags')->where('active' , 1);
         
         if ($request->diffculty != null){
             $problems->where('diffculty' , $request->diffculty);
@@ -203,7 +204,7 @@ class ProblemController extends Controller
         return $problems->get() ;
     }
     public function bankFilter(Request $request) {
-        $problems = Problem::query()->with('tags')->where('in_bank', 1);
+        $problems = Problem::query()->where('active', 0)->where('teacher_id',2);
 
         if ($request->diffculty != null){
             $problems->where('diffculty' , $request->diffculty);
@@ -222,6 +223,6 @@ class ProblemController extends Controller
             $problems->where('name' ,'like', "%$request->name%");
         }
         
-        return $problems->get();
+        return ProblemResource::collection($problems->get()) ;
     }
 }

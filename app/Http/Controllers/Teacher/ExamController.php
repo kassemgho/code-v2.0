@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Exam;
 use App\Models\ExamStudent;
 use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Http\Request;
+
+use function PHPUnit\Framework\returnSelf;
 
 class ExamController extends Controller
 {
@@ -73,7 +76,10 @@ class ExamController extends Controller
         return response()->json(['message' => 'Exam mark updated successfully.']);
 
     }
-    public function subjectExams(Subject $subject){
+    public function subjectExam(Category $category){
+        $subject= $category->subject ;
+        if ($subject->exam == NULL || $subject->exam->created_at < now()->subYear())
+        abort(300,'there is no exam yet ');
         return $subject->exam ;
     }
     public function show(Exam $exam){
@@ -82,5 +88,18 @@ class ExamController extends Controller
         $exam->problem1 ;
         return $exam ;
     }
-    
+    public function getMarks(Category $category){
+        $exam = $this->subjectExam($category) ;
+        return ['students' => $exam->students] ;
+    }
+    public function updateExamMarks(Exam $exam , Request $request){
+        $request->validate([
+            'students' => 'required|array'
+        ]);
+        
+        foreach ($request->students as $student){
+            $exam->students()->updateExistingPivot($student['id'] , ['mark' => $student['mark']]);    
+        }
+        return ['message' => 'marks updated successfully '];
+    }
 }

@@ -57,6 +57,7 @@ class CategoryController extends Controller
         ] ,200);
     }
     public function updateCategory(Request $request,Category $category){
+        
         $this->teacherAuth($category) ;
         $request = $request->except(['name' , 'teacher_id'  , 'subject_id' ,'id']);
         $category->update($request);

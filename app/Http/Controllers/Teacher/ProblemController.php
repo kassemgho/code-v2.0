@@ -106,6 +106,7 @@ class ProblemController extends Controller
     public function generateTestCases(Request $request){
         
         $inputs = CodeExecutorController::generateTestCases($request->model);
+        // return $request;
         $i = 0 ;
         $res = [];
         foreach ($inputs as $input){
@@ -117,7 +118,7 @@ class ProblemController extends Controller
             else $res[$i]['output'] = CodeExecutorController::runJavaCode($param)['output'];
             $i++;
         }
-        return $res ;
+        return['data' =>  $res] ;
     }
   
 }

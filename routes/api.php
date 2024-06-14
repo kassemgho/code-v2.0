@@ -97,6 +97,7 @@ Route::group(['prefix' => 'teacher' , 'middleware' => ['auth:sanctum','teacher']
         Route::get('{category}/marksStudents', [MarkController::class, 'showMarks']);
         Route::post('{category}/attendance/',[CategoryController::class , 'checkStudents']);
         Route::post('/{category}' , [CategoryController::class , 'updateCategory']);
+        Route::get('{category}/exma-marks' , [ExamController::class  ,'getMarks']); // kassem add to postman collection 
     });
 
     Route::group(['prefix' => 'exams'] , function(){
@@ -104,7 +105,8 @@ Route::group(['prefix' => 'teacher' , 'middleware' => ['auth:sanctum','teacher']
         Route::post('/edit-student-exam' , [ExamController::class, 'editMarkExamStudent']);
         Route::post('/answers' , [ExamController::class, 'showStudentSolve']);
         Route::get('show/{exam}' , [ExamController::class , 'show']);
-        Route::get('/{subject}' ,[ExamController::class , 'subjectExams']);
+        Route::get('/{category}' ,[ExamController::class , 'subjectExam']); // kassem 
+        Route::post('{exam}/update-marks' ,[ ExamController::class , 'updateExamMarks']); // kassem 
     });
     Route::group(['prefix' => 'assessment'] , function(){
         Route::post('/stop/{assessment}' , [AssessmentController::class , 'stopAssessment']);

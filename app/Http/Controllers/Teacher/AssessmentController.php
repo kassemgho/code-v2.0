@@ -42,15 +42,13 @@ class AssessmentController extends Controller
         $request->validate([
             'students' => 'required|array'
         ]);
-        if ($assessment->active == 1){
+        if ($assessment->active == 0  ){ 
             return ['message' => 'this assessment is already stoped'];
         }
-
         $this->checkPermission($assessment) ;
-        // return $request ;
         DB::beginTransaction();
-        $category = $assessment->category ;
         $assessment->active = 0 ; 
+        $assessment->save();
         $assessment->problem->active = 1;
         $category = $assessment->category ;
         foreach($request->students as $student){
@@ -59,20 +57,23 @@ class AssessmentController extends Controller
                 ->first();
             if ($cat_stu == null){
                 // return [$student , $category] ; 
+                DB::rollBack();
                 return ['message' => "the student with this id $student[id] is not exist in this category $category->id" ];   
+                
             }
-            if ($student['mark']!=0)
+            if ($student['mark']!==0)
             if ($student['mark'] > 100)
             return ['message' => 'the mark should less than 100'];
                     // return $cat_stu ;
-            $assessment->students()->updateExistingPivot( $student,[
+            $assessment->students()->updateExistingPivot($student['id'],[
                 'mark' => $student['mark'] 
             ]);
             $cat_stu->number_of_assessment = $cat_stu->number_of_assessment + 1 ;
             $cat_stu->attendance_marks ++;
             $cat_stu->save();
-            DB::commit();
+            
         }
+        DB::commit();
         return ['mesage' => 'assessment finishing successfully'] ;
     }
     public function active(Assessment $assessment , Request $request ) {

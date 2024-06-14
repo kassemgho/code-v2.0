@@ -11,53 +11,53 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Rels;
 
 class CodeExecutorController extends Controller
 {
-    // public static function runCppCode(array $param):array
-    // {
+    public static function runCppCode(array $param):array
+    {
         
-    //     // Receive the C++ code and input from the request.
-    //     $cppCode = $param['code'];
-    //     $input = $param['input']; // Default to an empty string if 'input' is not provided.
+        // Receive the C++ code and input from the request.
+        $cppCode = $param['code'];
+        $input = $param['input']; // Default to an empty string if 'input' is not provided.
 
-    //     // Create a temporary input file and write the input data to it.
-    //     $inputFilePath = tempnam(sys_get_temp_dir(), 'Code/cpp_input_');
-    //     file_put_contents($inputFilePath, $input);
+        // Create a temporary input file and write the input data to it.
+        $inputFilePath = tempnam(sys_get_temp_dir(), 'Code/cpp_input_');
+        file_put_contents($inputFilePath, $input);
 
-    //     // Create a temporary error file for compilation or execution errors.
-    //     $errorFilePath = tempnam(sys_get_temp_dir(), 'Code/cpp_error_');
-    //     $salt = random_int(1, 1000000);
-    //     $filename =  "cpp_code_$salt.cpp";
+        // Create a temporary error file for compilation or execution errors.
+        $errorFilePath = tempnam(sys_get_temp_dir(), 'Code/cpp_error_');
+        $salt = random_int(1, 1000000);
+        $filename =  "cpp_code_$salt.cpp";
 
-    //     // Path to the /tmp directory
-    //     $tmpDirectory = "/tmp/";
-    //     // Write the text to a file in the /tmp directory
-    //     file_put_contents($tmpDirectory . $filename, $param['code']);
-    //     // Run the C++ code with input and capture the output and errors.
-    //     $command = "g++ /tmp/cpp_code_$salt.cpp -o /tmp/cpp_code_output_$salt 2> $errorFilePath && cat $inputFilePath | /tmp/cpp_code_output_$salt";
-    //     // return $command ;
-    //     $start_time = microtime(true) ; 
-    //     exec($command, $output, $returnCode);
-    //     $end_time = microtime(true) ;
-    //     if ($returnCode !== 0) {
-    //         // Compilation or execution error occurred.
-    //             // Clean up temporary files.
-    //         $errorOutput = file_get_contents($errorFilePath);
-    //         unlink($inputFilePath);
-    //         unlink($errorFilePath);
-    //         unlink("/tmp/cpp_code_$salt.cpp");
-    //         // Return the output as a response.
+        // Path to the /tmp directory
+        $tmpDirectory = "/tmp/";
+        // Write the text to a file in the /tmp directory
+        file_put_contents($tmpDirectory . $filename, $param['code']);
+        // Run the C++ code with input and capture the output and errors.
+        $command = "g++ /tmp/cpp_code_$salt.cpp -o /tmp/cpp_code_output_$salt 2> $errorFilePath && cat $inputFilePath | /tmp/cpp_code_output_$salt";
+        // return $command ;
+        $start_time = microtime(true) ; 
+        exec($command, $output, $returnCode);
+        $end_time = microtime(true) ;
+        if ($returnCode !== 0) {
+            // Compilation or execution error occurred.
+                // Clean up temporary files.
+            $errorOutput = file_get_contents($errorFilePath);
+            unlink($inputFilePath);
+            unlink($errorFilePath);
+            unlink("/tmp/cpp_code_$salt.cpp");
+            // Return the output as a response.
 
-    //         // Return the error message as a response.
-    //         return ['error' => $errorOutput];
-    //     }
+            // Return the error message as a response.
+            return ['error' => $errorOutput];
+        }
 
-    //     // Clean up temporary files.
-    //     unlink($inputFilePath);
-    //     unlink($errorFilePath);
-    //     unlink("/tmp/cpp_code_$salt.cpp");
-    //     unlink("/tmp/cpp_code_output_$salt");
-    //     // Return the output as a response.
-    //     return ['output' => implode(PHP_EOL, $output), 'time' => $end_time - $start_time];
-    // }
+        // Clean up temporary files.
+        unlink($inputFilePath);
+        unlink($errorFilePath);
+        unlink("/tmp/cpp_code_$salt.cpp");
+        unlink("/tmp/cpp_code_output_$salt");
+        // Return the output as a response.
+        return ['output' => implode(PHP_EOL, $output), 'time' => $end_time - $start_time];
+    }
 
     public static function runJavaCode(array $param):array
     {
@@ -114,7 +114,7 @@ class CodeExecutorController extends Controller
 
     Public static  function generateTestCases($model){
         $code = Storage::get('public/generateTestCasess');
-        $result = Static::runJavaRemontly(['code' => $code , 'input' => $model]);
+        $result = Static::runJavaCode(['code' => $code , 'input' => $model]);
         $result = explode('***' , $result['output']) ;
         array_pop($result);
         return $result ;
@@ -134,7 +134,7 @@ class CodeExecutorController extends Controller
         ]);
 
     }
-    public static function runCppCode($param){
+    public static function runCppCodeRemontly($param){
         $client = new Client();
         
         $url = 'https://emkc.org/api/v2/piston/execute'; //

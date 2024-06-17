@@ -23,23 +23,23 @@ class ExamController extends Controller
             ->where('exam_id' , $request->exam_id)
             ->first();
         // $solve['problem_1'] = $solve->exam->problem1->description ; 
-        // return $solve ;
-        $answer = $solve->answers->map(function ($answer) {
+        $answer = $solve->answers()->get()->map(function ($answer) {
             return [
+                'id' => $answer->id ,
                 'question_text' => $answer->trueFalseQuestion()->first()['question_text'],
-                'answer' => $answer->answere
+                'answer' => $answer->answer
             ];
         });
         
-        $solve['answers'] = $answer ;
+        $solve->answers = $answer ;
         return $solve;
     }
 
     public function editMarkStudent(Request $request) {
         $request->validate([
-            'exam_id' => 'required|integer' ,
-            'student_id' => 'required|integer' ,
-            'mark' => 'required|integer'
+            'exam_id' => 'required|integer|exists:exams,id' ,
+            'student_id' => 'required|integer|exists:students,id' ,
+            'mark' => 'required|integer|max:15|min:0'
         ]);
         $exam = ExamStudent::where('student_id' , $request->student_id)
             ->where('exam_id' , $request->exam_id)
@@ -83,14 +83,22 @@ class ExamController extends Controller
         return $subject->exam ;
     }
     public function show(Exam $exam){
-        $exam->students ;
         $exam->trueFalseQuestions ;
         $exam->problem1 ;
         return $exam ;
     }
     public function getMarks(Category $category){
         $exam = $this->subjectExam($category) ;
-        return ['students' => $exam->students] ;
+        return [
+            'students' => $exam->students->map(function($student){
+                return [
+                    'id' => $student->id ,
+                    'name' =>$student->user->name ,
+                    'university_id' => $student->university_id ,
+                    'mark' => $student->pivot->mark     
+                ];
+            })
+        ] ;
     }
     public function updateExamMarks(Exam $exam , Request $request){
         $request->validate([

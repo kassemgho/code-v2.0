@@ -26,7 +26,6 @@ class ExamFactory extends Factory
             'time' => $this->faker->dateTime(),
             'subject_id' => Subject::inRandomOrder()->value('id'),
             'problem1_id' => Problem::inRandomOrder()->value('id'),
-            'problem2_id' => Problem::inRandomOrder()->value('id'),
         ];
     }
 }

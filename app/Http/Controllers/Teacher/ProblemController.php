@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProblemResource;
 use App\Models\Problem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProblemController extends Controller
 {
@@ -119,6 +120,15 @@ class ProblemController extends Controller
             $i++;
         }
         return['data' =>  $res] ;
+    }
+    public function showSample(Request $request){
+        $request->validate([
+            'model' =>'required'
+        ]);
+        $code = Storage::get('public/generateTestCasess2');
+        // return $code ;
+        $sample = CodeExecutorController::runJavaRemontly(['code' => $code , 'input' => $request->model]);
+        return['sample' => $sample['output'] ];
     }
   
 }

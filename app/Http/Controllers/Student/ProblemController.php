@@ -204,7 +204,7 @@ class ProblemController extends Controller
         return $problems->get() ;
     }
     public function bankFilter(Request $request) {
-        $problems = Problem::query()->where('active', 0)->where('teacher_id',2);
+        $problems = Problem::query()->where('active', 0)->where('teacher_id',auth()->user()->teacher->id);
 
         if ($request->diffculty != null){
             $problems->where('diffculty' , $request->diffculty);

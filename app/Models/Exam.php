@@ -17,7 +17,7 @@ class Exam extends Model
 
     public function students()
     {
-        return $this->belongsToMany(Student::class, 'exam_studentt')->withPivot('mark');
+        return $this->belongsToMany(Student::class, 'exam_student')->withPivot('mark');
     }
 
     public function admin(): BelongsTo

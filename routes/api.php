@@ -24,6 +24,7 @@ use App\Http\Controllers\Student\ProfileController;
 use App\Http\Controllers\Student\TagController as StudentTagController;
 use App\Http\Controllers\Teacher\AuthController as TeacherAuthController;
 use App\Http\Controllers\Teacher\SubjectController;
+use App\Models\Problem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -88,6 +89,7 @@ Route::group(['prefix' => 'teacher' , 'middleware' => ['auth:sanctum','teacher']
         Route::get('/{problem}', [ProblemController::class, 'show']);
         Route::post('add-tag' , [TagController::class , 'addTag']);
         Route::post('generate-test-cases' , [ProblemController::class , 'generateTestCases']);
+        Route::post('generate-sample' , [ProblemController::class,'showSample']);
     });
     Route::group(['prefix' => 'categories'] , function(){
         Route::get('/min' , [CategoryController::class, 'index']);
@@ -97,7 +99,6 @@ Route::group(['prefix' => 'teacher' , 'middleware' => ['auth:sanctum','teacher']
         Route::get('{category}/marksStudents', [MarkController::class, 'showMarks']);
         Route::post('{category}/attendance/',[CategoryController::class , 'checkStudents']);
         Route::post('/{category}' , [CategoryController::class , 'updateCategory']);
-        Route::get('{category}/exma-marks' , [ExamController::class  ,'getMarks']); // kassem add to postman collection 
     });
 
     Route::group(['prefix' => 'exams'] , function(){
@@ -105,6 +106,7 @@ Route::group(['prefix' => 'teacher' , 'middleware' => ['auth:sanctum','teacher']
         Route::post('/edit-student-exam' , [ExamController::class, 'editMarkExamStudent']);
         Route::post('/answers' , [ExamController::class, 'showStudentSolve']);
         Route::get('show/{exam}' , [ExamController::class , 'show']);
+        Route::get('{category}/marks' , [ExamController::class  ,'getMa rks']); // kassem add to postman collection 
         Route::get('/{category}' ,[ExamController::class , 'subjectExam']); // kassem 
         Route::post('{exam}/update-marks' ,[ ExamController::class , 'updateExamMarks']); // kassem 
     });

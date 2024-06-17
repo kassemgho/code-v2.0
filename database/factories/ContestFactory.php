@@ -18,7 +18,7 @@ class ContestFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
-            'duration' => $this->faker->time(),
+            'duration' => 2,
             'start_at' => $this->faker->date(),
         ];
     }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProblemResource;
 use App\Models\Problem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProblemController extends Controller
@@ -37,6 +38,7 @@ class ProblemController extends Controller
             'test_cases' => 'required|array',
             'tags' => 'required|array',
         ]);
+        DB::beginTransaction();
         $problem = $teacher->problems()->create($request->all());
         // add tags to problem
         $maxTim = 0 ;
@@ -57,13 +59,7 @@ class ProblemController extends Controller
                     'input' => $test_case,
                 ]);
             }
-            if (array_key_exists('error' , $output)) {
-                $problem->delete() ;
-                return response()->json([
-                    'input' => $test_case ,
-                    'output' =>'wrong test case ' . $output['error'],
-                ]);
-            }
+    
             if ($output['time'] > $maxTim)$maxTim = $output['time'] ;
             $problem->testCases()->create([
                 'input'=>$input ,
@@ -73,6 +69,7 @@ class ProblemController extends Controller
         //add the time of the problem and we can make it integer to present seconds . 
         $problem->time_limit_ms = $maxTim + 0.2 ;
         $problem->save() ;
+        DB::commit();
         $problem->testCases ;
         $problem['code']= $problem->teacher_code_solve ;    
         return $problem ;   
@@ -121,12 +118,34 @@ class ProblemController extends Controller
         }
         return['data' =>  $res] ;
     }
+    public function generateOutputs(Request $request){
+        $request->validate([
+            'testCasess' => 'required|array' ,
+            'code' => 'required',
+            'language' => 'required|integer'
+        ]);
+        $i = 0 ;
+        $result = [] ;
+        foreach($request->testCasess as $testcCase){
+            $result[$i]['input'] = $testcCase ;
+            if ($request->language == 1){
+                $result [$i]['output'] = CodeExecutorController::runCppCode(['code'=>$request->code , 'input'=>$testcCase])['output']; 
+            }
+            else {
+                $result [$i]['output'] = CodeExecutorController::runJavaCode(['code'=>$request->code , 'input'=>$testcCase])['output']; 
+            }
+            $i++;
+        }
+        return response()->json([
+            'message' => 'outputs generated successfully',
+            'testCasess' => $result 
+        ],200);
+    }
     public function showSample(Request $request){
         $request->validate([
             'model' =>'required'
         ]);
         $code = Storage::get('public/generateTestCasess2');
-        // return $code ;
         $sample = CodeExecutorController::runJavaRemontly(['code' => $code , 'input' => $request->model]);
         return['sample' => $sample['output'] ];
     }

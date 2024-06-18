@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Adminstrator;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\StudentDispalyResource;
 use App\Models\Category;
 use App\Models\ChangeCategoryRequest;
 use App\Models\SetOfStudent;
@@ -86,6 +85,10 @@ class StudentController extends Controller
             foreach($categories as $category){
                 if ($category->name[strlen($category->name)-1] == $row[0]){
                     $student->categories()->attach($category->id);
+                    // //add students to subjects also 
+                    // foreach($subjects as $subject){
+                    //     $student->subjects()->attach($subject) ;
+                    // }
                 }
             }
         }

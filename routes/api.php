@@ -63,7 +63,7 @@ Route::group(['prefix' => 'adminstrator' , 'middleware' => ['auth:sanctum','admi
     Route::post('add-teacher2category' , [TeacherController::class , 'assignmentTeacherToCategory']);
     Route::get('categries-no-teacheruniversity_ids' , [AdminstratorCategoryController::class , 'categoriesWihtNoTeacher']);
     Route::group(['prefix' => 'students'] , function(){
-        Route::post('distribute' , [AdminStudentController::class , 'distribut\eCategories']);
+        Route::post('distribute' , [AdminStudentController::class , 'distributeCategories']);
     });
 });
 Route::group(['prefix' => 'teacher' , 'middleware' => ['auth:sanctum','teacher']] , function(){
@@ -90,6 +90,7 @@ Route::group(['prefix' => 'teacher' , 'middleware' => ['auth:sanctum','teacher']
         Route::post('add-tag' , [TagController::class , 'addTag']);
         Route::post('generate-test-cases' , [ProblemController::class , 'generateTestCases']);
         Route::post('generate-sample' , [ProblemController::class,'showSample']);
+        Route::post('generateOutputs' , [ProblemController::class , 'generateOutputs']);
     });
     Route::group(['prefix' => 'categories'] , function(){
         Route::get('/min' , [CategoryController::class, 'index']);
@@ -172,7 +173,7 @@ Route::get('testf' , [ExcelImportController::class , 'test']);
 Route::post('run' , function(Request $request){
     $param['input'] = $request->input ;
     $param['code'] = $request->code ;
-    return CodeExecutorController::runCPPCode($param);
+    return CodeExecutorController::runCppCodeRemontly($param);
 });
 
 Route::get('test' , function (){

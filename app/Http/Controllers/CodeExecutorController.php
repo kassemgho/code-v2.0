@@ -9,6 +9,8 @@ use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Rels;
 
+use function PHPUnit\Framework\returnSelf;
+
 class CodeExecutorController extends Controller
 {
     public static function runCppCode(array $param):array
@@ -47,7 +49,7 @@ class CodeExecutorController extends Controller
             // Return the output as a response.
 
             // Return the error message as a response.
-            abort(400 ,   $errorOutput . "  in test cases $param[input]");
+            return ['error'=>   $errorOutput . "  in test cases $param[input]"];
         }
 
         // Clean up temporary files.
@@ -94,7 +96,7 @@ class CodeExecutorController extends Controller
             unlink($errorFilePath);
             unlink("/tmp/java_code$salt.java");
             // Return the error message as a response.
-            abort(400 , $errorOutput . "  in test cases $param[input]");
+            return['error' => $errorOutput . "  in test cases $param[input]"];
         }
         // Run the compiled Java code with input and capture the output.
         $executionCommand = "cd /tmp  && cat $inputFilePath | java Main" ;
@@ -159,7 +161,7 @@ class CodeExecutorController extends Controller
 
         $result = json_decode($response->getBody(), true);
         if($result['run']['stderr'] != "")
-         abort(400 ,$result['run']['stderr']. "  in test cases $param[input]" );
+         return[ 'error'=>$result['run']['stderr']. "  in test cases $param[input]" ];
         return ['output' => $result['run']['output'] , 'time' => 0.0];
         // return response()->json($result);
         } catch (\GuzzleHttp\Exception\RequestException $e) {
@@ -193,7 +195,7 @@ class CodeExecutorController extends Controller
         // return $result ;
         if($result['run']['stderr'] != "")
         
-        abort(400 ,$result['run']['stderr'] . "  in test cases $param[input]");
+        return['error' =>  $result['run']['stderr'] . "  in test cases $param[input]"];
         return ['output' => $result['run']['output'] , 'time' => 0.0];
         // return response()->json($result);
         } catch (\GuzzleHttp\Exception\RequestException $e) {

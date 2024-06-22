@@ -13,6 +13,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+            $schedule->command('yearly:cleanup')
+             ->yearlyOn(9,1, '00:00'); // A
     }
 
     /**

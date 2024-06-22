@@ -108,7 +108,7 @@ Route::group(['prefix' => 'teacher' , 'middleware' => ['auth:sanctum','teacher']
         Route::post('/edit-student-exam' , [ExamController::class, 'editMarkExamStudent']);
         Route::post('/answers' , [ExamController::class, 'showStudentSolve']);
         Route::get('show/{exam}' , [ExamController::class , 'show']);
-        Route::get('{category}/marks' , [ExamController::class  ,'getMa rks']); // kassem add to postman collection 
+        Route::get('{category}/marks' , [ExamController::class  ,'getMarks']); // kassem add to postman collection 
         Route::get('/{category}' ,[ExamController::class , 'subjectExam']); // kassem 
         Route::post('{exam}/update-marks' ,[ ExamController::class , 'updateExamMarks']); // kassem 
     });

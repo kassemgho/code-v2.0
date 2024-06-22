@@ -90,6 +90,7 @@ class ExamController extends Controller
     public function getMarks(Category $category){
         $exam = $this->subjectExam($category) ;
         return [
+            'exam' => $exam ,
             'students' => $exam->students->map(function($student){
                 return [
                     'id' => $student->id ,

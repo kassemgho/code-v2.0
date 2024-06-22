@@ -100,6 +100,7 @@ Route::group(['prefix' => 'teacher' , 'middleware' => ['auth:sanctum','teacher']
         Route::get('{category}/marksStudents', [MarkController::class, 'showMarks']);
         Route::post('{category}/attendance/',[CategoryController::class , 'checkStudents']);
         Route::post('/{category}' , [CategoryController::class , 'updateCategory']);
+        Route::post('{category}/add-student' , [CategoryController::class , 'addStudent']);
     });
 
     Route::group(['prefix' => 'exams'] , function(){

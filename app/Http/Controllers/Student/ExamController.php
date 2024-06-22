@@ -35,9 +35,19 @@ class ExamController extends Controller
         return $exams ;
     }
     public function solve(Exam $exam , Request $request){
+        if (!$exam->students->contains($this->student->id)){
+            return ['message' => 'you can not solve this exam'];
+        }
         if ($exam->students()->where('student_id' , $this->student->id)->first()->pivot->mark != 0){
             return ['message'=> 'you already solve this exam'];
         }
+         if ($exam->time > now()){
+            abort(403,'exam not started yet');
+        }
+        if ($exam->time < now()->subMinutes($exam->duration)){
+            abort(403,'exam over');
+        }
+        
         $request->validate([
             'anseres' => 'required|array',
             'problem_mark' => 'required|integer|max:15|min:0' 
@@ -59,7 +69,9 @@ class ExamController extends Controller
                 }
             }
         }
-        $examMark = ($count / count($qustions) ) * 10 ;
+        $examMark = ($count / count($qustions) ) * 10 + $request->problem_mark ;
+        $examStudent->mark = $examMark ;
+        $examStudent->save();
         return [
             'message' => "your mark is $examMark , amd you can review your solve in any time "
         ];

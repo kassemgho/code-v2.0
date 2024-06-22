@@ -10,6 +10,7 @@ use App\Models\CategoryStudent;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\StudentT;
 
 class CategoryController extends Controller
 {
@@ -98,5 +99,20 @@ class CategoryController extends Controller
         });
 
         return response()->json($result);
+    }
+    public function addStudent(Category $category , Request $request){
+        $request->validate([
+            'university_id' => 'required|exists:students,university_id'
+        ]);
+        $subject = $category->subject()->first();
+        $student = Student::where('university_id' , $request->university_id)->first();
+        $studentCategories = $student->categories()->get();
+        foreach($studentCategories as $s_category){
+            if($s_category->subject()->first()->id == $subject->id){
+                $student->categories()->detach($s_category);
+            }
+        }
+        $category->students()->attach($student->id);
+        return ['message' => 'student added successfully'];
     }
 }

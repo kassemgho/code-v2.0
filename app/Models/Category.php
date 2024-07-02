@@ -12,15 +12,13 @@ class Category extends Model
         'name',
         'subject_id',
         'teacher_id',
-        'number_of_lessons',
         'mark_of_commings',
         'mark_of_ratings',
         ] ;
 
     public function students()
     {
-        return $this->belongsToMany(Student::class, 'category_student')
-            ->withPivot('attendance_marks','assessment_marks','number_of_assessment','mark','presence');
+        return $this->belongsToMany(Student::class, 'category_student');
     }
     public function subjectTeacher()
     {

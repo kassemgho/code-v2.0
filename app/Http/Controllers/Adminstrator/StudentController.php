@@ -9,7 +9,9 @@ use App\Models\SetOfStudent;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\User;
+use Egulias\EmailValidator\Result\Reason\Reason;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -18,13 +20,29 @@ use Maatwebsite\Excel\Facades\Excel;
 class StudentController extends Controller
 {
     public function index() {
-        $data['students'] = Student::all();
+        $data['students'] = Student::with('user')->get()->map(function ($student) {
+            return [
+                'id' => $student->id,
+                'student_name' => $student->user->name,
+                'student_email' => $student->user->email,
+                'phone_number' => $student->phone_number,
+                "hint_count" => $student->hint_count,
+                "points" => $student->points,
+                "rate" => $student->rate,
+                "date_of_birth" => $student->date_of_birth,
+                "easy" => $student->easy,
+                "medium" => $student->medium,
+                "hard" => $student->hard,
+                "university_id" => $student->university_id,
+            ];
+        });
         $data['change_class_request'] = ChangeCategoryRequest::all()->map(function ($request) {
             return [
                 'id' => $request->id,
                 'student_name' => $request->student->user->name,
                 'old_class' => $request->old_category,
-                'new_class' => $request->new_category, 
+                'new_class' => $request->new_category,
+                'reason' => $request->reason
             ];
         });
         return $data;
@@ -43,15 +61,44 @@ class StudentController extends Controller
         $request->validate([
             'file' => 'required'
         ]);
+
         $file = $request->file('file');
         $rows = Excel::toCollection([] , $file)[0];
+        DB::beginTransaction();
+        $studentExists = [] ;
+        $i=0;
         foreach($rows as $row){
             if ($row[0] == 'number')continue ;
-            SetOfStudent::create([
-                'number' =>$row[0] ,
-                'name' =>  $row[1]
-            ]);
+            if (Student::where('university_id' , $row[0])->exists()){
+                $studentExists[$i]['number'] = $row[0] ;
+                $studentExists[$i]['name'] = $row[1];
+                $i++;
+            }else {
+                // SetOfStudent::create([
+                //     'number' =>$row[0] ,
+                //     'name' =>  $row[1]
+                // ]);
+            
+                $user = User::create([
+                    'email' => $row[0] ,
+                    'name' => $row[1],
+                    'password' => ($row[2]) ,
+                    'role' => 'student'
+                ]);
+                $user->student()->create([
+                    'university_id' => $row[0],
+                ]);
+            }
         }
+        DB::commit();
+        if (count($studentExists)!=0){
+            return response()->json([
+                'message' => 'those students alrady exists' ,
+                'students' => $studentExists 
+            ],300);
+        }
+        return ['message' => 'studnts added successfully']; 
+        
     }
         public function distributeCategories(Request $request){
         $request->validate([
@@ -62,36 +109,60 @@ class StudentController extends Controller
         $subjects = ($request->year == 1) ? [1,2] : [3 ,4 ,5] ;
         $file = $request->file('file');
         $rows = Excel::toCollection([] , $file)[0];
-        $this->distribute($request , $subjects , $rows);
+        $result = $this->distribute($request , $subjects , $rows);
+        if ($result != NULL){
+        return response()->json([
+            'message' =>  'added successfully' ,
+            'students' => $result
+        ],300);
+        }
         return response()->json([
             'message' =>  'added successfully' ,
         ]);
     }
     private function distribute($request , $subjects , $rows){
+        $categories = [];
          for ($i = 1; $i <= $request->classes * count($subjects); $i++) {
             $subject_id = $subjects[(int)(($i-1)/$request->classes)] ;
             $subject = Subject::where('id' , $subject_id)->first();
             
             $categories [] = Category::create([
                 'subject_id' => $subject->id ,
-                'name' => $subject->name.'_'.$i ,
+                'name' => $subject->name.'_'. (($i-1) % count($subjects) + 1),
             ]);
         }
+        DB::beginTransaction();
         foreach ($rows as $row){
             if ($row[0] == 'class') continue;
-            
-            $user = User::where('name', $row[1])->first();
+            $studentsNotExists = [] ;
+            $user = User::where('university_id', $row[1])->first();
             $student = $user->student;
+            if ($student == null){
+                $studentsNotExists [] = ['name' => $row[2] , 'number' => $row[1]];
+            }
             foreach($categories as $category){
                 if ($category->name[strlen($category->name)-1] == $row[0]){
                     $student->categories()->attach($category->id);
-                    // //add students to subjects also 
-                    // foreach($subjects as $subject){
-                    //     $student->subjects()->attach($subject) ;
-                    // }
+                    $subject = $category->subject;
+                    if ($student->subjects()->contain($subject->id))
+                        $student->subjects()->updateExistingPivot($subject->id, [
+                            'final_mark' => 0,
+                        ]);  
+                  else $student->subjects()->attach($subject->id);
                 }
             }
         }
+        DB::commit();
+        return $studentsNotExists ;
     }
 }
 
+/**
+ * note :
+ * row[0] -> number 
+ * row[1] -> name 
+ * row[2] -> international_id 
+ * 
+ * 
+ * 
+ */

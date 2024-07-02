@@ -25,12 +25,11 @@ class Student extends Model
         public function exams(): BelongsToMany
     {
         return $this->belongsToMany(Exam::class, 'exam_student')
-            ->withPivot('mark', 'code1', 'code2');
+            ->withPivot('mark', 'code1');
     }
         public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'category_student')
-           ->withPivot('attendance_marks','assessment_marks','number_of_assessment', 'mark' , 'presence');
+        return $this->belongsToMany(Category::class, 'category_student');
     }
 
     public function contests(): BelongsToMany
@@ -46,5 +45,8 @@ class Student extends Model
     {
         return $this->belongsToMany(Assessment::class)
             ->withPivot('mark' , 'solve');
+    }
+    public function subjects() {
+        return $this->belongsToMany(Subject::class, 'student_subject');
     }
 }

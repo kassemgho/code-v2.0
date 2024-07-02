@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Answer extends Model
 {
     use HasFactory;
-    protected $fillable =['student_exam_id' , 'true_false_question_id' , 'answare'];
+    protected $fillable =['student_exam_id' , 'true_false_question_id' , 'answer'];
     
     public function studentExam(): BelongsTo
     {

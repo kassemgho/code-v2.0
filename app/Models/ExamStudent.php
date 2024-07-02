@@ -9,8 +9,11 @@ class ExamStudent extends Model
 {
     use HasFactory;
     protected $table = 'exam_student';
-    protected $hidden = ['code2' , 'created_at' , 'updated_at'];
-
+    protected $fillable = [
+        'check', 'student_id', 'exam_id'
+    ];
+    protected $hidden = [ 'created_at' , 'updated_at'];
+    
     public function answers()
     {
         return $this->hasMany(Answer::class);

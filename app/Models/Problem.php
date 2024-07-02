@@ -14,16 +14,19 @@ class Problem extends Model
     protected $fillable = [
         'time_limit_ms','teacher_id' , 'diffculty','name' , 
         'description', 'teacher_code_solve', 'active', 
-        'hint1', 'hint2', 'level', 'in_bank', 'solutions'
+        'hint1', 'hint2', 'level', 'in_bank', 'solutions', 'administrator_id'
     ];
     protected $hidden = [
-        'teacher_code_solve'
+        'teacher_code_solve' ,
     ];
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(Teacher::class);
     }
-
+    public function administrator(): BelongsTo
+    {
+        return $this->belongsTo(Administrator::class);
+    }
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class);

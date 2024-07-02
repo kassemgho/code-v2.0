@@ -19,10 +19,9 @@ class ExamStudentFactory extends Factory
     public function definition(): array
     {
         return [
-            'student_id' => Student::inRandomOrder()->value('id'),
+            'student_id' => 1,
             'exam_id' => Exam::inRandomOrder()->value('id'),
             'code1' => $this->faker->text,
-            'code2' => $this->faker->text,
         ];
     }
 }

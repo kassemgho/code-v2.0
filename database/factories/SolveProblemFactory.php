@@ -20,7 +20,7 @@ class SolveProblemFactory extends Factory
     {
         return [
             'problem_id' => Problem::inRandomOrder()->value('id'),
-            'student_id' => Student::inRandomOrder()->value('id'),
+            'student_id' =>1,
             'student_code' => $this->faker->text,
             'approved' => $this->faker->boolean,
         ];

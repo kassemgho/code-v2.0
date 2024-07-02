@@ -20,6 +20,7 @@ use App\Http\Controllers\Student\AuthController as StudentAuthController;
 use App\Http\Controllers\Student\CategoryController as StudentCategoryController;
 use App\Http\Controllers\Student\ContestController;
 use App\Http\Controllers\Student\ProblemController as StudentProblemController;
+use App\Http\Controllers\Student\ExamController as StudentExamController;
 use App\Http\Controllers\Student\ProfileController;
 use App\Http\Controllers\Student\TagController as StudentTagController;
 use App\Http\Controllers\Teacher\AuthController as TeacherAuthController;
@@ -45,14 +46,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
-Route::post('student/register', [StudentAuthController::class, 'register']);
 
 Route::group(['prefix' => 'adminstrator' , 'middleware' => ['auth:sanctum','adminstrator']] , function(){
     Route::get('teachers', [TeacherController::class, 'index']);
     Route::post('teachers/add', [TeacherController::class, 'addTeacher']);
     Route::delete('teacher/{teacher}', [TeacherController::class, 'deleteTeacher']);
-    
     Route::post('change/{changeCategoryRequest}', [RequestController::class, 'accept']);
+    Route::delete('delete-request/{changeCategoryRequest}', [RequestController::class, 'delete']);
     Route::get('categories-with-subjects', [AdminstratorCategoryController::class, 'categoriesWithSubjects']);
     Route::get('exams', [AdminstratorExamController::class, 'index']);
     Route::get('exams/{exam}', [AdminstratorExamController::class, 'show']);
@@ -65,9 +65,11 @@ Route::group(['prefix' => 'adminstrator' , 'middleware' => ['auth:sanctum','admi
     Route::group(['prefix' => 'students'] , function(){
         Route::post('distribute' , [AdminStudentController::class , 'distributeCategories']);
     });
+
+    Route::get('bank-problems', [ProblemController::class, 'showAdminBank']);
+    Route::post('problems/add-problem' , [ProblemController::class, 'storeAdmin']);
 });
 Route::group(['prefix' => 'teacher' , 'middleware' => ['auth:sanctum','teacher']] , function(){
-    Route::post('login' , [TeacherAuthController::class , 'login']);
     Route::group(['prefix' => 'profile'] , function(){
         Route::get('/' , [TeacherProfileController::class ,'show']);
         Route::post('/' , [TeacherProfileController::class ,'update']);
@@ -153,6 +155,7 @@ Route::group(['prefix' => 'student' , 'middleware' => ['auth:sanctum','student']
         Route::post('{contest}/solve/{problem}' , [ContestController::class , 'solve']);
         Route::post('join/{contest}' , [ContestController::class , 'join']);
         
+
         Route::get('/{contest}' , [ContestController::class , 'show']) ;
     });
     Route::group(['prefix' => 'categories'] , function(){
@@ -163,8 +166,17 @@ Route::group(['prefix' => 'student' , 'middleware' => ['auth:sanctum','student']
     });
     Route::group(['prefix' => 'assessment'] , function(){
         Route::get('/{category}' , [StudentAssessmentController::class , 'show']);
+        Route::get('show/{assessment}' , [StudentAssessmentController::class , 'showAssessment']);
         Route::post('solve/{assessment}' ,[StudentAssessmentController::class , 'solveAssessment']);
         Route::get('show-solve/{assessment}' , [StudentAssessmentController::class , 'showSolve']);
+    });
+    Route::group(['prefix' => 'exams'] , function(){
+        Route::get('/', [StudentExamController::class, 'index']);
+        Route::get('/{exam}', [StudentExamController::class, 'show']);
+        Route::get('/{exam}/show-solve', [StudentExamController::class, 'showStudentExamSolve']);
+        Route::post('/{exam}/join', [StudentExamController::class, 'joinExam']);
+        Route::post('{exam}/solve', [StudentExamController::class, 'solve']);
+        Route::post('{exam}/submit', [StudentExamController::class, 'submit']);
     });
 });
 
@@ -177,6 +189,3 @@ Route::post('run' , function(Request $request){
     return CodeExecutorController::runCppCodeRemontly($param);
 });
 
-Route::get('test' , function (){
-    return CodeExecutorController::generateTestCases("5 INTEGER 10 100 INTEGER 10 100 EXIT ");
-});

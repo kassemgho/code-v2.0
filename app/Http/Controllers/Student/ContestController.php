@@ -45,7 +45,6 @@ class ContestController extends Controller
             'start_at' => 'required|date_format:Y-m-d',
             'description' => 'required|string',
             'password' => 'required|string',
-            'scoure' => 'required',
             'contest_time' => 'required',
             'min_level' => 'required|integer|min:1|max:10',
             'max_level' => 'required|integer|min:0|max:10',
@@ -68,7 +67,7 @@ class ContestController extends Controller
                    $contest->students()->attach($student_id) ;
         $contest->save() ;
         return response()->json([
-            'message' => "contest will start at $request->start_at",
+            'message' => "contest will start at $request->start_at $request->contest_time",
         ],200);
     }
     public function solve(Contest $contest , Problem $problem,Request $request){

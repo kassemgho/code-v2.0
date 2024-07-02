@@ -20,7 +20,7 @@ class ContestStudentFactory extends Factory
     {
         return [
             'contest_id' => Contest::inRandomOrder()->value('id'),
-            'student_id' => Student::inRandomOrder()->value('id'),
+            'student_id' => 1,
         ];
     }
 }

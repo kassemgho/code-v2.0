@@ -19,8 +19,11 @@ class ContestController extends Controller
     public function index() {
         $contests = Contest::all();
         $contests = $contests->map(function($contest) {
+            if($contest->start_at. ' ' . $contest->contest_time < now()->subHour($contest->duration))
+                $contest->delete() ;
             $contest['owner'] = auth()->user()->student->user->name;
             return $contest;
+            
         });
         return $contests;
     }
@@ -31,6 +34,8 @@ class ContestController extends Controller
     public function myContests() {
         $student = auth()->user()->student;
         $contests = $student->contests->map(function($contest){
+              if($contest->start_at. ' ' . $contest->contest_time < now()->subHour($contest->duration))
+                $contest->delete() ;
             $contest['owner'] = $contest->owner() ;
             return $contest ;
         });
@@ -95,10 +100,11 @@ class ContestController extends Controller
     }
     public function join(Contest $contest,Request $request){
         
-        if($contest->students()->exists(auth()->user()->student->id))
-        return response()->json([
-            'messsage' => 'allready exists',
-        ]);
+        if($contest->students->contains(auth()->user()->student->id)){
+            return response()->json([
+                'messsage' => 'allready exists',
+            ],409);
+        }
         $this->checkContestTime($contest) ;
         if ($contest->password == NULL){
             $contest->students()->attach(auth()->user()->student->id);
@@ -125,7 +131,7 @@ class ContestController extends Controller
         if ($currentDateTime < ($contest_time))
             abort(403,'contest not start yet');
         else if ($currentDateTime->subHours($contest->duration) > ($contest->start_at. ' ' .$contest->contest_time)) 
-            abort(403,'contest is over from');
+            abort(403,'contest is over from ' .$contest->start_at);
     }
     public function show (Contest $contest){
         $contest = Contest::with('students.user', 'problems')->findOrFail($contest->id);

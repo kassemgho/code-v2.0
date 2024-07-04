@@ -70,9 +70,6 @@ class ProblemController extends Controller
             'message' => 'good',
         ];
         
-        if (!empty($teacherSolves)) {
-            $response['test_cases'] = ' ';
-        }
         
         return response()->json($response, 201);
     }

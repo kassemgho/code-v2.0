@@ -148,11 +148,11 @@ Route::group(['prefix' => 'student' , 'middleware' => ['auth:sanctum','student']
         
     });
     Route::group(['prefix' => 'contests'] , function(){
-        Route::get('allStudents', [ContestController::class, 'allStudents']);
-        Route::get('/all', [ContestController::class, 'index']);
-        Route::get('/', [ContestController::class, 'myContests']);
+        Route::get('/all', [ContestController::class, 'index']);//
+        Route::get('/my', [ContestController::class, 'myContests']);//
+        Route::get('/',[ContestController::class ,  'show']);
         Route::post('create' , [ContestController::class , 'create']);
-        Route::post('{contest}/solve/{problem}' , [ContestController::class , 'solve']);
+        Route::post('{contest}/solve/{problem}' , [ContestController::class , 'solve']); 
         Route::post('join/{contest}' , [ContestController::class , 'join']);
         
 

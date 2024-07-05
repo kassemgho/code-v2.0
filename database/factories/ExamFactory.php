@@ -22,10 +22,10 @@ class ExamFactory extends Factory
         return [
             'passwd' => $this->faker->password,
             'administrator_id' => Administrator::inRandomOrder()->value('id'),
-            'name' => $this->faker->word,
+            'name' => 'programing 1',
             'time' => $this->faker->dateTime(),
-            'subject_id' => Subject::inRandomOrder()->value('id'),
-            'problem1_id' => Problem::inRandomOrder()->value('id'),
+            'subject_id' => 1,
+            'problem1_id' => 1,
         ];
     }
 }

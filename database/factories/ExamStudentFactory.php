@@ -20,7 +20,7 @@ class ExamStudentFactory extends Factory
     {
         return [
             'student_id' => 1,
-            'exam_id' => Exam::inRandomOrder()->value('id'),
+            'exam_id' => 1,
             'code1' => $this->faker->text,
         ];
     }

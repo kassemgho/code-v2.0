@@ -19,15 +19,9 @@ class CategoryStudentFactory extends Factory
      */
     public function definition(): array
     {
-        $category = Category::inRandomOrder()->first();
-        $student = Student::inRandomOrder()->first();
-        StudentSubject::create([
-            'subject_id' => $category->subject->id ,
-            'student_id' => $student->id ,
-        ]);
         return [
-            'category_id' => $category->id,
-            'student_id' => $student->id ,
+            'category_id' =>1,
+            'student_id' => 1,
         ];
     }
 }

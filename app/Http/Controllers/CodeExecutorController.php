@@ -47,9 +47,9 @@ class CodeExecutorController extends Controller
             unlink($errorFilePath);
             unlink("/tmp/cpp_code_$salt.cpp");
             // Return the output as a response.
-
+            info($output) ;
             // Return the error message as a response.
-            return ['error'=>   $errorOutput . "  in test cases $param[input]"];
+            return [ 'error'=>   $errorOutput . "  in test cases $param[input] " ];
         }
 
         // Clean up temporary files.

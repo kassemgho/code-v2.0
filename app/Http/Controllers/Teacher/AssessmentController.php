@@ -31,6 +31,10 @@ class AssessmentController extends Controller
             'name' => 'string' ,
             'problem_id' => 'required|exists:problems,id'
         ]);
+        $category = Category::find($request->category_id);
+        if ( $category->teacher_id != auth()->user()->teacher->id){
+            abort(403 , 'this category does not belongs to you');
+        }
         $request['teacher_id'] = auth()->user()->teacher->id;
         Assessment::create($request->all());
         return [
@@ -49,9 +53,7 @@ class AssessmentController extends Controller
         DB::beginTransaction();
         $assessment->active = 0 ; 
         $assessment->save();
-        $problem = $assessment->problem;
-        $problem->active = 1 ;
-        $problem->save();
+
         $category = $assessment->category ;
         foreach($request->students as $student){
             $cat_stu = CategoryStudent::where('student_id' , $student['id'])
@@ -85,7 +87,9 @@ class AssessmentController extends Controller
             return ['message'=>'this assessment already active'];
         }
         $assessment->active = 1 ;
-        $category = $assessment->category ;
+        $problem = $assessment->problem ;
+        $problem->active = 1 ;
+        $problem->save();
         $assessment->save() ;
         foreach($request->students as $student){
             $assessment->students()->attach($student);

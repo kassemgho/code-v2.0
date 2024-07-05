@@ -21,6 +21,21 @@ class TestCaseFactory extends Factory
     {
         $problem = Problem::inRandomOrder()->first();
         $test_case = [
+            [ // divide tow number
+                'input' => '3 1',
+                'output' => '3',
+               
+            ],
+            [ 
+                'input' => '3 0',
+                'output' => '0',
+               
+            ],
+            [ 
+                'input' => '10000 2',
+                'output' => '5000',
+               
+            ],
             [ // array summ
                 'input' => '3 1 4 5',
                 'output' => '10',
@@ -68,8 +83,9 @@ class TestCaseFactory extends Factory
             ],
         ];
         $k=0;
-        if ($problem->name == 'max number') $k=3 ;
-        if ($problem->name == 'sort the array') $k=6 ;
+        if ($problem->name == 'array sum') $k=3 ;
+        if ($problem->name == 'max number') $k=6 ;
+        if ($problem->name == 'sort the array') $k=9 ;
         for ($i = 0 ; $i<3 ; $i++){
             TestCase::create([
                 'input' => $test_case[$i+$k]['input'],

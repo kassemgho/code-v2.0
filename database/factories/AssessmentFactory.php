@@ -22,9 +22,9 @@ class AssessmentFactory extends Factory
         $Category = Category::inRandomOrder()->first() ;
         return [
             'name' => 'assessment' . rand(0,10),
-            'category_id'=>$Category->id,
-            'teacher_id'=>$Category->teacher->id,
-            'problem_id'=>Problem::inRandomOrder()->value('id'),
+            'category_id'=> 1,
+            'teacher_id'=>1 ,
+            'problem_id'=>1,
         ];
     }
 }

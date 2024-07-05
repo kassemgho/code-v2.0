@@ -74,9 +74,9 @@ class ProblemController extends Controller
         return response()->json($response, 201);
     }
     public static function show(Problem $problem){
-        // if ($problem->active == 0) {
-        //     abort(403, 'you cant access this problem');
-        // }
+        if ($problem->active == 0) {
+            abort(403, 'you cant access this problem');
+        }
         $problem->testCase ;
         $problem->tags ;
         $solved = SolveProblem::where('student_id' , auth()->user()->student->id )
@@ -115,7 +115,7 @@ class ProblemController extends Controller
                 $output = CodeExecutorController::runCppCode(['code' => $request->code , 'input' => $testCase->input]);
             else $output = CodeExecutorController::runJavaCode(['code' => $request->code , 'input' => $testCase->input]);
             // retuen the error if accourd 
-            if (array_key_exists('error' , $output)) {         
+            if (array_key_exists('error' , $output)) {    
                 $output = $output['error'];
                 $time = 0 ;
                 $message = "error " . $output ;
@@ -158,6 +158,7 @@ class ProblemController extends Controller
         ];
     }
     public function solve(Problem $problem , Request $request){
+        
         $solve = $this->solveProlem($problem , $request) ;
         $student = auth()->user()->student;
         if ($solve['approved'] == false){

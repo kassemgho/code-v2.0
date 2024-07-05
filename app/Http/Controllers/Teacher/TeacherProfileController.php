@@ -34,6 +34,8 @@ class TeacherProfileController extends Controller
         if (!Hash::check($request->old_password, $user->password)) {
             return ['message' => 'The old password is incorrect'];
         }
+        $user->currentAccessToken()->delete();
+
 
         // Update the password
         $user->update([
@@ -45,3 +47,7 @@ class TeacherProfileController extends Controller
         ] ; 
     }
 }
+//
+//
+//
+//OOWrGgWRGhLZZon5Hjh61sKZz68a2RS7gA2yTFc6345b2641

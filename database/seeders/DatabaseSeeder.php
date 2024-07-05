@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Teacher;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -14,6 +16,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call([
+            SubjectSeeder::class,
+            StudentSeeder::class,
+            TeacherSeeder::class ,
+        ]);
         \App\Models\User::create([
             'name' => 'Ammar Jokhadar' ,
             'email_verified_at' => now() ,
@@ -22,28 +29,27 @@ class DatabaseSeeder extends Seeder
             'remember_token' => Str::random(10),
             'role' => 'adminstrator'
         ]);
-        
-        // \App\Models\Student::factory(10)->create();
-        // StudentSeeder::run();  
-        \App\Models\Student::factory()->create();  
+        \App\Models\Category::factory()->create();
         \App\Models\Teacher::factory(10)->create();
-        \App\Models\Administrator::factory(10)->create();
+        \App\Models\Administrator::factory(1)->create();
         \App\Models\Tag::factory(10)->create();
         \App\Models\Problem::factory(10)->create();
         \App\Models\ProblemTag::factory(10)->create();
         \App\Models\SolveProblem::factory(10)->create();
         \App\Models\TestCase::factory(10)->create();
         \App\Models\Subject::factory(5)->create();
-        \App\Models\Exam::factory(10)->create();
-        \App\Models\ExamStudent::factory(10)->create();
-        \App\Models\TrueFalseQuestion::factory(10)->create();
-        \App\Models\Answer::factory(10)->create();
-        \App\Models\Contest::factory(10)->create();
+        \App\Models\Exam::factory()->create();
+        $this->call([
+            TrueFalseQustionSeeder::class
+        ]);
+        \App\Models\CategoryStudent::factory()->create();
+        \App\Models\ExamStudent::factory(1)->create();
+        // \App\Models\TrueFalseQuestion::factory(10)->create();
+        // \App\Models\Answer::factory(1)->create();
+        \App\Models\Contest::factory(1)->create();
         \App\Models\ContestProblem::factory(10)->create();
-        \App\Models\ContestStudent::factory(10)->create();
-        \App\Models\Category::factory(10)->create();
-        \App\Models\CategoryStudent::factory(10)->create();
-        \App\Models\Assessment::factory(10)->create();
+        \App\Models\ContestStudent::factory(1)->create();
+        \App\Models\Assessment::factory(1)->create();
         
     }
 }

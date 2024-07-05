@@ -62,16 +62,24 @@ class StudentSeeder extends Seeder
             ],
         
         ];
-        collect($students)->map(function($stu){ 
-            $user = User::factory()->create(['name' => $stu['name'] ,'role' => 'student']);
-            $user->student()->create([
-                'university_id' => $stu['university_id'],
-            ]);
-            // Student::factory()->create([
-            //     'university_id' => $stu['university_id'],
-            //     'user_id' => $user_id
-            // ]);
-        });
+        // collect($students)->map(function($stu){ 
+        //     $user = User::factory()->create(['name' => $stu['name'] ,'role' => 'student']);
+        //     $user->student()->create([
+        //         'university_id' => $stu['university_id'],
+        //     ]);
+        // });
+        $user = User::create([
+            'email' => '12345',
+            'password' => 'password' ,
+            'name' => 'kassem ghotani' ,
+            'role' => 'student'
+
+        ]);
+        $user->student()->create([
+            'phone_number' => '0998085197',
+            'university_id' => 12345
+        ]);
+          
         
     }
 }

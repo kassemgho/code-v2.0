@@ -145,11 +145,13 @@ Route::group(['prefix' => 'student' , 'middleware' => ['auth:sanctum','student']
     });
     Route::group(['prefix' => 'profile'] , function(){
         Route::get('/' , [ProfileController::class , 'show']);
-        
+        Route::post('/update' , [ProfileController::class  , 'update']) ;
+        Route::post('change-password' , [TeacherProfileController::class , 'changePassword']) ;
+        //        
     });
     Route::group(['prefix' => 'contests'] , function(){
-        Route::get('/all', [ContestController::class, 'index']);//
-        Route::get('/my', [ContestController::class, 'myContests']);//
+        Route::get('/all', [ContestController::class, 'index']);
+        Route::get('/my', [ContestController::class, 'myContests']);
         Route::get('/',[ContestController::class ,  'show']);
         Route::post('create' , [ContestController::class , 'create']);
         Route::post('{contest}/solve/{problem}' , [ContestController::class , 'solve']); 
@@ -181,8 +183,10 @@ Route::group(['prefix' => 'student' , 'middleware' => ['auth:sanctum','student']
 });
 
 
-Route::post('test' , [ExcelImportController::class , 'test']) ;
-Route::get('testf' , [ExcelImportController::class , 'test']);
+Route::get('test' , [ExcelImportController::class , 'test']) ;
+Route::get('testf/{d}' , function($d){
+    return base64_decode($d) ;
+});
 Route::post('run' , function(Request $request){
     $param['input'] = $request->input ;
     $param['code'] = $request->code ;

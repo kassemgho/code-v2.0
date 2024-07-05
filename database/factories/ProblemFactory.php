@@ -18,6 +18,18 @@ class ProblemFactory extends Factory
     public function definition(): array {
     $problems = [
         [
+            "name" => 'divide tow number',
+            "code" => "#include<iostream>
+                using namespace std ;
+                int main(){
+                    int x , y;  
+                    cin>>x>>y ;
+                    cout<<x/y;
+                    return 0;
+                }",
+            'description' => 'Given tow integer number . print the result of divign the first on the secound . and note if the secound was zero print zeror '
+        ],
+        [
             "name" => 'array sum',
             "code" => "#include<iostream>
                 using namespace std ;
@@ -68,8 +80,9 @@ class ProblemFactory extends Factory
                 }",
             'description' => 'Given an array of integers nums and an integer target, sort the array in ascending order.'
         ],
+        
     ];
-    $rand = random_int(0,2);
+    $rand = random_int(0,3);
         return [
             'name' => $problems[$rand]['name'],
             'description' => $problems[$rand]['description'],

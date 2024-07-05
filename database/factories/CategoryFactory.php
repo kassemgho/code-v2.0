@@ -20,11 +20,11 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-        'name' => $this->faker->word . '_' . random_int(1,10),
-            'mark_of_commings' => $this->faker->randomFloat(2, 0, 10),
-            'mark_of_ratings' => $this->faker->randomFloat(2, 0, 10),
-            'subject_id' => Subject::inRandomOrder()->value('id'),
-            'teacher_id' => Teacher::inRandomOrder()->value('id')
+        'name' => 'programing1_1',
+            'mark_of_commings' => 5,
+            'mark_of_ratings' => 10,
+            'subject_id' => 1,
+            'teacher_id' => 1 ,
         ];
     }
 }

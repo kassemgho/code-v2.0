@@ -7,13 +7,15 @@ use App\Models\ExamStudent;
 use App\Models\StudentSubject;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ProfileController extends Controller
 {
     public function show() {
         $user = auth()->user();
         $student = $user->student()->first();
-        
+        $qrcode = QrCode::generate($student->university_id);
         $student['materials'] = $student->categories()
             ->get()
             ->map(function ($category) use ($student){
@@ -63,8 +65,43 @@ class ProfileController extends Controller
             });
             $student['solutions'] = $student->hard + $student->medium + $student->easy;
             $student['detail'] = $user;
+            $student['image'] = base64_encode($qrcode);
         
         return $student;
+    }
+      public function update(Request $request){
+        $user = auth()->user() ;
+        $student = $user->student ;
+        $request = $request->except(['id','university_id','role','password']);
+        
+        $student->update($request) ;
+        $user->update($request);
+        $student->user ;
+        return response()->json([
+            'data' => $student , 
+            'message' => 'updated successfully'
+        ]);
+    }
+    public function changePassword(Request $request){
+        $request->validate([
+            'old_password' => 'required|string',
+            'new_password' => 'required|string' ,
+        ]);
+        $user = auth()->user();
+        
+        // Verify the old password
+        if (!Hash::check($request->old_password, $user->password)) {
+            return ['message' => 'The old password is incorrect'];
+        }
+
+        // Update the password
+        $user->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+        return [
+            'message' => 'password updated successfully',
+            'user' => $user->email     
+        ] ; 
     }
     
     

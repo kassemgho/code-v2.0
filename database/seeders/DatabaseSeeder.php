@@ -22,12 +22,20 @@ class DatabaseSeeder extends Seeder
             TeacherSeeder::class ,
         ]);
         \App\Models\User::create([
-            'name' => 'Ammar Jokhadar' ,
+            'name' => 'super admin' ,
             'email_verified_at' => now() ,
-            'email' => 'DR.ammarJokhadar@gmail.com',
+            'email' => 'superAdmin@gmail.com',
             'password' => Hash::make('passwordSuper'),
             'remember_token' => Str::random(10),
             'role' => 'adminstrator'
+        ]);
+        \App\Models\User::create([
+            'name' => 'monitor' ,
+            'email_verified_at' => now() ,
+            'email' => 'monitor@gmail.com',
+            'password' => Hash::make('password'),
+            'remember_token' => Str::random(10),
+            'role' => 'monitor'
         ]);
         \App\Models\Category::factory()->create();
         \App\Models\Teacher::factory(10)->create();

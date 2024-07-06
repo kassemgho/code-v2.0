@@ -20,10 +20,10 @@ class ExamFactory extends Factory
     public function definition(): array
     {
         return [
-            'passwd' => $this->faker->password,
+            'passwd' => 'password',
             'administrator_id' => Administrator::inRandomOrder()->value('id'),
             'name' => 'programing 1',
-            'time' => $this->faker->dateTime(),
+            'time' => now(),
             'subject_id' => 1,
             'problem1_id' => 1,
         ];

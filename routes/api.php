@@ -15,6 +15,7 @@ use App\Http\Controllers\Teacher\ProblemController;
 use App\Http\Controllers\Teacher\TagController;
 use App\Http\Controllers\Teacher\TeacherProfileController;
 use App\Http\Controllers\Adminstrator\TeacherController;
+use App\Http\Controllers\MonitorController;
 use App\Http\Controllers\Student\AssessmentController as StudentAssessmentController;
 use App\Http\Controllers\Student\AuthController as StudentAuthController;
 use App\Http\Controllers\Student\CategoryController as StudentCategoryController;
@@ -181,9 +182,14 @@ Route::group(['prefix' => 'student' , 'middleware' => ['auth:sanctum','student']
         Route::post('{exam}/submit', [StudentExamController::class, 'submit']);
     });
 });
+Route::group(['prefix' => 'monitor' , 'middleware'=>['auth:sanctum' , 'monitor']], function(){
+    Route::get('exam' , [MonitorController::class , 'getCurrentExam']);
+    Route::get('exam/{exam}/{id}',[MonitorController::class , 'checkStudent']);
+});
 
+Route::get('exam' , [MonitorController::class , 'getCurrentExam']);
 
-Route::get('test' , [ExcelImportController::class , 'test']) ;
+Route::get('test' , [ExcelImportController::class , 'test2']) ;
 Route::get('testf/{d}' , function($d){
     return base64_decode($d) ;
 });

@@ -55,9 +55,14 @@ class ExamController extends Controller
     }
     
     public function solve(Request $request, Exam $exam){
-        $studentId = auth()->user()->student->id;
-        if (!$exam->students->contains($studentId)){
-            return ['error' => 'you are not in this subject.'];
+        $student = auth()->user()->student ;
+        $studentId =$student->id;
+        $pivot = $student->exams()->where('exam_id' , $exam->id)->first();
+        if($pivot == null){
+            return ['error' => 'you are not in this subjext .'];
+        }
+        if ($pivot == 1){
+            return ['error' => 'please wait to exam monitor to get attendance '];
         }
         if ($exam->students()->where('student_id' , $studentId)->first()->pivot->mark != 0){
             return ['message'=> 'you already solve this exam'];
@@ -132,13 +137,15 @@ class ExamController extends Controller
                 ->where('exam_id', $exam->id)
                 ->first()->check;
             if ($check >= 1) {
-                abort(403, 'you registered before');
+                return response()->json([
+                    'message' => 'you registered in the exam successfully.'
+                ]);
             }
             // The student is enrolled in the subject, you can proceed with password check
             $enteredPassword = $request->input('password');
             if ($exam->passwd == $enteredPassword) {
 
-                $exam->students()->updateExistingPivot($studentId, ['check' => DB::raw('`check` + 1')]);
+                $exam->students()->updateExistingPivot($studentId, ['check' =>1]);
                 return response()->json([
                     'message' => 'you registered in the exam successfully.'
                 ]);

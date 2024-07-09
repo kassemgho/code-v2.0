@@ -92,7 +92,8 @@ class AssessmentController extends Controller
         $problem->save();
         $assessment->save() ;
         foreach($request->students as $student){
-            $assessment->students()->attach($student);
+            if(!$assessment->students()->contains($student))
+                $assessment->students()->attach($student);
         }
         
         return ['message' => 'activeated successfully ']; 

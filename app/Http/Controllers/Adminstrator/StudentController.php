@@ -100,7 +100,8 @@ class StudentController extends Controller
         return ['message' => 'studnts added successfully']; 
         
     }
-        public function distributeCategories(Request $request){
+        
+    public function distributeCategories(Request $request){
         $request->validate([
             'classes' => 'required|integer',
             'year' => 'required|integer',
@@ -135,20 +136,25 @@ class StudentController extends Controller
         foreach ($rows as $row){
             if ($row[0] == 'class') continue;
             $studentsNotExists = [] ;
-            $user = User::where('university_id', $row[1])->first();
-            $student = $user->student;
+            $student = Student::where('university_id', $row[1])->first();
+            // $student = $user->student;
             if ($student == null){
                 $studentsNotExists [] = ['name' => $row[2] , 'number' => $row[1]];
-            }
+            }else 
             foreach($categories as $category){
                 if ($category->name[strlen($category->name)-1] == $row[0]){
+                    
+                    if ($student->subjects->contains($subject->id)){
+                        $student->subjects()->detach($subject->id);
+                        $oldCategories = $subject->categories()->get();
+                        foreach ($oldCategories as $oldCategory){
+                            $student->categories()->detach($oldCategory->id);
+                        }
+                    }
+                    
                     $student->categories()->attach($category->id);
                     $subject = $category->subject;
-                    if ($student->subjects()->contain($subject->id))
-                        $student->subjects()->updateExistingPivot($subject->id, [
-                            'final_mark' => 0,
-                        ]);  
-                  else $student->subjects()->attach($subject->id);
+                    $student->subjects()->attach($subject->id);
                 }
             }
         }

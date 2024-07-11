@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Adminstrator\BackupController;
 use App\Http\Controllers\Adminstrator\CategoryController as AdminstratorCategoryController;
 use App\Http\Controllers\Adminstrator\StudentController as AdminStudentController;
 use App\Http\Controllers\Adminstrator\ExamController as AdminstratorExamController;
@@ -69,6 +70,9 @@ Route::group(['prefix' => 'adminstrator' , 'middleware' => ['auth:sanctum','admi
 
     Route::get('bank-problems', [ProblemController::class, 'showAdminBank']);
     Route::post('problems/add-problem' , [ProblemController::class, 'storeAdmin']);
+    Route::get('backups' , [BackupController::class , 'index']);
+    Route::get('backups/{year}' , [BackupController::class , 'getByName']);
+    
 });
 Route::group(['prefix' => 'teacher' , 'middleware' => ['auth:sanctum','teacher']] , function(){
     Route::group(['prefix' => 'profile'] , function(){
@@ -198,4 +202,5 @@ Route::post('run' , function(Request $request){
     $param['code'] = $request->code ;
     return CodeExecutorController::runCppCodeRemontly($param);
 });
+
 

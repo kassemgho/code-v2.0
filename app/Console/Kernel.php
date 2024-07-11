@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
             $schedule->command('yearly:cleanup')
-             ->yearlyOn(9,1, '00:00'); // A
+             ->yearlyOn(7,11, '20:27'); // A
     }
 
     /**

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use Illuminate\Support\Facades\Storage;
 use mysqli;
 use PDO;
-use SimpleSoftwareIO\QrCode\Facades\QrCode ;
 
 class ExcelImportController extends Controller
 {
@@ -24,8 +24,14 @@ class ExcelImportController extends Controller
       return $result ;
     }
     public function test2(){
-      $student = Student::find(1);
-      $qrcode = QrCode::size(300)->generate($student->university_id);
-      return base64_encode($qrcode) ;
+      // $files = Storage::files('backups');
+        $files = Storage::disk('local')->files('public/backups');
+       
+          $fileUrls = array_map(function ($file) {
+            return url('/storage/backups/' . basename($file));
+        }, $files);
+
+        // Return the list of files as a JSON response
+        return response()->json($fileUrls);
     }
 }

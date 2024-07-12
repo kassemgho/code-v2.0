@@ -161,6 +161,18 @@ class StudentController extends Controller
         DB::commit();
         return $studentsNotExists ;
     }
+    public function search(Request $request){
+        $student = Student::
+        whereHas('user', function ($query) use ($request) {
+                       $query->where('name', $request->name);
+                   })
+        ->orWhere('university_id' , $request->university_id)
+                   ->first();
+        if($student == null)
+        return response()->json(['message' => 'invalid data'] , 400) ;
+        $student['name'] = $student->user()->first()->name ;
+        return $student ;
+    }
 }
 
 /**

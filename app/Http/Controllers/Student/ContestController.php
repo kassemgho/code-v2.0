@@ -19,9 +19,10 @@ class ContestController extends Controller
     public function index() {
         $contests = Contest::all();
         $contests = $contests->map(function($contest) {
+            $contest['owner'] = auth()->user()->student->user->name;
             if($contest->start_at. ' ' . $contest->contest_time < now()->subHour($contest->duration))
                 $contest->delete() ;
-            $contest['owner'] = auth()->user()->student->user->name;
+            // else 
             return $contest;
             
         });
@@ -34,9 +35,10 @@ class ContestController extends Controller
     public function myContests() {
         $student = auth()->user()->student;
         $contests = $student->contests->map(function($contest){
+            $contest['owner'] = $contest->owner() ;
               if($contest->start_at. ' ' . $contest->contest_time < now()->subHour($contest->duration))
                 $contest->delete() ;
-            $contest['owner'] = $contest->owner() ;
+            // else 
             return $contest ;
         });
         

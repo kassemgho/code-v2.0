@@ -30,6 +30,7 @@ use App\Http\Controllers\Teacher\SubjectController;
 use App\Models\Problem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use PhpOffice\PhpSpreadsheet\RichText\Run;
 
 /*
 |--------------------------------------------------------------------------
@@ -190,8 +191,8 @@ Route::group(['prefix' => 'monitor' , 'middleware'=>['auth:sanctum' , 'monitor']
     Route::get('exam' , [MonitorController::class , 'getCurrentExam']);
     Route::get('exam/{exam}/{id}',[MonitorController::class , 'checkStudent']);
 });
+Route::post('search', [AdminStudentController::class,'search']);
 
-Route::get('exam' , [MonitorController::class , 'getCurrentExam']);
 
 Route::get('test' , [ExcelImportController::class , 'test2']) ;
 Route::get('testf/{d}' , function($d){

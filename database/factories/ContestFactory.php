@@ -19,7 +19,7 @@ class ContestFactory extends Factory
         return [
             'name' => $this->faker->word,
             'duration' => 2,
-            'start_at' => $this->faker->date(),
+            'start_at' => now()->format('y-m-d'),
             'contest_time' => now()->format('H:i:s')
         ];
     }

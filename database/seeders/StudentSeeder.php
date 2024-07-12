@@ -16,14 +16,14 @@ class StudentSeeder extends Seeder
     {
         $students = [
             [
+                'name' => 'Kassem Ghotani',
+                'user_id' => 2,
+                'university_id' => 12345
+            ],
+            [
                 'name' => 'Mouaz Abbas',
                 'user_id' => 1,
                 'university_id' => 99999  
-            ],
-            [
-                'name' => 'Kassem Gho',
-                'user_id' => 2,
-                'university_id' => 55555
             ],
             [
                 'name' => 'Abd Fayad',
@@ -62,23 +62,23 @@ class StudentSeeder extends Seeder
             ],
         
         ];
-        // collect($students)->map(function($stu){ 
-        //     $user = User::factory()->create(['name' => $stu['name'] ,'role' => 'student']);
-        //     $user->student()->create([
-        //         'university_id' => $stu['university_id'],
-        //     ]);
-        // });
-        $user = User::create([
-            'email' => '12345',
-            'password' => 'password' ,
-            'name' => 'kassem ghotani' ,
-            'role' => 'student'
+        collect($students)->map(function($stu){ 
+            $user = User::factory()->create(['name' => $stu['name'] ,'role' => 'student' ,'email' => $stu['university_id'] ] );
+            $user->student()->create([
+                'university_id' => $stu['university_id'],
+            ]);
+        });
+        // $user = User::create([
+        //     'email' => '12345',
+        //     'password' => 'password' ,
+        //     'name' => 'kassem ghotani' ,
+        //     'role' => 'student'
 
-        ]);
-        $user->student()->create([
-            'phone_number' => '0998085197',
-            'university_id' => 12345
-        ]);
+        // ]);
+        // $user->student()->create([
+        //     'phone_number' => '0998085197',
+        //     'university_id' => 12345
+        // ]);
           
         
     }

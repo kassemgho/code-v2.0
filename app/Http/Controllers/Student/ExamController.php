@@ -20,10 +20,10 @@ class ExamController extends Controller
 
     public function show(Exam $exam) {
         $studentId = auth()->user()->student->id;
-        $isEnrolled = $exam->subject->students->contains($studentId);
+        $isEnrolled = $exam->students->contains($studentId);
         if (!$isEnrolled) {
             return response()->json([
-                'error' => 'you can t access this exam. you are not belong to this subject'
+                'error' => 'you can t access this exam. you are not belong to this exam'
             ]);
         }
         if (!ExamStudent::where('student_id', $studentId)->where('exam_id', $exam->id)->where('check', '>=', 1)->exists()) {
@@ -57,22 +57,24 @@ class ExamController extends Controller
     public function solve(Request $request, Exam $exam){
         $student = auth()->user()->student ;
         $studentId =$student->id;
+
         $pivot = $student->exams()->where('exam_id' , $exam->id)->first();
-        if($pivot == null){
-            return ['error' => 'you are not in this subjext .'];
-        }
-        if ($pivot == 1){
-            return ['error' => 'please wait to exam monitor to get attendance '];
-        }
-        if ($exam->students()->where('student_id' , $studentId)->first()->pivot->mark != 0){
-            return ['message'=> 'you already solve this exam'];
-        }
-         if ($exam->time > now()){
+        if ($exam->time > now()){
             abort(403,'exam not started yet');
         }
         if ($exam->time < now()->subMinutes($exam->duration)){
             abort(403,'exam over');
         }
+        if($pivot == null){
+            return ['error' => 'you are not in this subjext .'];
+        }
+        if ($pivot->check == 1){
+            return ['error' => 'please wait to exam monitor to get attendance '];
+        }
+        if ($exam->students()->where('student_id' , $studentId)->first()->pivot->mark != 0){
+            return ['message'=> 'you already solve this exam'];
+        }
+       
         
         $request->validate([
             'answers' => 'required|array',
@@ -90,8 +92,8 @@ class ExamController extends Controller
                 'answer' => $answere['answere']
             ]);
             foreach($qustions as $qustion){
-                if ($qustion->id == $answere['true_false_question_id'] 
-                && $answere['answere'] == $qustion->correct){
+                if ($qustion->id == $answere['true_false_question_id'] &&
+                 $answere['answere'] != -1 && $answere['answere'] == $qustion->correct){
                     $count++;
                 }
             }
@@ -116,10 +118,10 @@ class ExamController extends Controller
         $precent = ProblemController::solveProlem($exam->problem1, $request)['percent'];
         $markOfProblem = 5 ;
         $result = $precent *  $markOfProblem / 100;
-        $exam->students()->updateExistingPivot($studentId , ['mark' => $precent*$markOfProblem]);  
+        $exam->students()->updateExistingPivot($studentId , ['code1' => $request->code]);  
         return [
             'message' => "you get $result from 5 and you can resubmit the solve \n but note , once you subimt you will lose the old solve and mark ",
-            'mark' => $result
+            'mark' => $result/100
         ];
     }
     

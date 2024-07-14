@@ -15,7 +15,7 @@ class ProfileController extends Controller
     public function show() {
         $user = auth()->user();
         $student = $user->student()->first();
-        $qrcode = QrCode::generate($student->university_id);
+        // $qrcode = QrCode::generate($student->university_id);
         $student['materials'] = $student->categories()
             ->get()
             ->map(function ($category) use ($student){
@@ -65,7 +65,7 @@ class ProfileController extends Controller
             });
             $student['solutions'] = $student->hard + $student->medium + $student->easy;
             $student['detail'] = $user;
-            $student['image'] = base64_encode($qrcode);
+            // $student['image'] = base64_encode($qrcode);
         
         return $student;
     }

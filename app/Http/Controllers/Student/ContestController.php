@@ -17,14 +17,15 @@ use Illuminate\Http\Request;
 class ContestController extends Controller
 {
     public function index() {
-        $contests = Contest::all();
-        $contests = $contests->map(function($contest) {
-            $contest['owner'] = auth()->user()->student->user->name;
-            if($contest->start_at. ' ' . $contest->contest_time < now()->subHour($contest->duration))
-                $contest->delete() ;
-            // else 
+        $contests = Contest::orderBy('start_at', 'desc')
+                           ->orderBy('contest_time', 'desc')
+                           ->get();
+        $contests->map(function ($contest)  {
+            // Combine date and time to create a full datetime string
+            $contestStartDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $contest->start_at . ' ' . $contest->contest_time);
+            $contestEndDateTime = $contestStartDateTime->copy()->addHour($contest->duration);
+            $contest->finish = $contestEndDateTime->isPast();
             return $contest;
-            
         });
         return $contests;
     }
@@ -34,14 +35,14 @@ class ContestController extends Controller
     }
     public function myContests() {
         $student = auth()->user()->student;
-        $contests = $student->contests->map(function($contest){
-            $contest['owner'] = $contest->owner() ;
-              if($contest->start_at. ' ' . $contest->contest_time < now()->subHour($contest->duration))
-                $contest->delete() ;
-            // else 
-            return $contest ;
+        $contests = $student->contests ;
+        $contests->map(function ($contest)  {
+            // Combine date and time to create a full datetime string
+            $contestStartDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $contest->start_at . ' ' . $contest->contest_time);
+            $contestEndDateTime = $contestStartDateTime->copy()->addHour($contest->duration);
+            $contest->finish = $contestEndDateTime->isPast();
+            return $contest;
         });
-        
         return $contests ;
     }
     public function create(Request $request){
@@ -154,7 +155,7 @@ class ContestController extends Controller
                 'name' => $contest->name,
                 'description' => $contest->description,
                 'start_at' => $contest->start_at,
-                'contest_time' => $contest->time,
+                'contest_time' => $contest->contest_time,
                 'problems' => $contest->problems->map(function ($problem) {
                     return [
                         'id' => $problem->id,

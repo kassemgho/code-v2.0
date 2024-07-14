@@ -39,8 +39,18 @@ class CategoryController extends Controller
         $data = [] ;
         $data['teacher_name'] = $category->teacher->user->name ;
         $data['subject'] = $category->subject->name ;
-        $data['assessments'] = $category->assessments ;
-        return $data ;
+        $a = [] ;
+        $data['assessments'] = $category->assessments()->get()->map(function($assessment) use ($a){
+            if ($assessment->students()->get()->contains(auth()->user()->student->id))
+                return $assessment ;
+        }) ;
+        $a = [] ;
+        foreach ($data['assessments'] as $assessment){
+            if($assessment != null)
+                $a [] = $assessment ;
+        }
+        $data['assessments'] = $a ;
+        return  $data;
    }
 
     

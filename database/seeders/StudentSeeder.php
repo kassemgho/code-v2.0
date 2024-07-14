@@ -23,42 +23,48 @@ class StudentSeeder extends Seeder
             [
                 'name' => 'Mouaz Abbas',
                 'user_id' => 1,
-                'university_id' => 99999  
+                'university_id' => 11111  
             ],
             [
                 'name' => 'Abd Fayad',
                 'user_id' => 3 ,
-                'university_id' => 1854796
-            ],
-            [
-                'name' => 'Noha Salem',
-                'user_id' => 4,
-                'university_id' => 1855797
+                'university_id' => 22222
             ],
             [
                 'name' => 'Loujain Ibrah',
                 'user_id' => 5,
-                'university_id' => 1865478
+                'university_id' => 33333
             ],
             [
-                'name' => 'Mohamed Taha',
+                'name' => 'Noha Salem',
+                'user_id' => 4,
+                'university_id' => 44444
+            ],
+           
+            [
+                'name' => 'sara',
                 'user_id' => 6,
-                'university_id' => 112211
+                'university_id' => 55555
             ],
             [
-                'name' => 'Seba Talea',
+                'name' => 'lana',
                 'user_id' => 7,
-                'university_id' => 22255
+                'university_id' => 66666
             ],
             [
-                'name' => 'Lilian Kabool',
+                'name' => 'seba',
                 'user_id' => 8,
-                'university_id' => 1122111
+                'university_id' => 77777
             ],
             [
-                'name' => 'Lana Essa',
+                'name' => 'odai',
                 'user_id' => 9,
-                'university_id' => 11212121
+                'university_id' => 88888
+            ],
+            [
+                'name' => 'odai',
+                'user_id' => 9,
+                'university_id' => 99999
             ],
         
         ];

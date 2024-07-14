@@ -106,6 +106,7 @@ class CategoryController extends Controller
         ]);
         $subject = $category->subject()->first();
         $student = Student::where('university_id' , $request->university_id)->first();
+        $student->subjects()->detach($subject->id);
         $studentCategories = $student->categories()->get();
         foreach($studentCategories as $s_category){
             if($s_category->subject()->first()->id == $subject->id){
@@ -113,6 +114,7 @@ class CategoryController extends Controller
             }
         }
         $category->students()->attach($student->id);
+        $student->subjects()->attach($subject->id);
         return ['message' => 'student added successfully'];
     }
 }

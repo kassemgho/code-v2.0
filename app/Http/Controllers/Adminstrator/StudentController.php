@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Adminstrator;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\StudentDispalyResource;
 use App\Models\Category;
 use App\Models\ChangeCategoryRequest;
 use App\Models\SetOfStudent;
@@ -111,7 +112,7 @@ class StudentController extends Controller
         $file = $request->file('file');
         $rows = Excel::toCollection([] , $file)[0];
         $result = $this->distribute($request , $subjects , $rows);
-        if ($result != NULL){
+        if ($result != null){
         return response()->json([
             'message' =>  'added successfully' ,
             'students' => $result
@@ -143,7 +144,7 @@ class StudentController extends Controller
             }else 
             foreach($categories as $category){
                 if ($category->name[strlen($category->name)-1] == $row[0]){
-                    
+                    $subject = $category->subject()->first();
                     if ($student->subjects->contains($subject->id)){
                         $student->subjects()->detach($subject->id);
                         $oldCategories = $subject->categories()->get();
@@ -153,7 +154,6 @@ class StudentController extends Controller
                     }
                     
                     $student->categories()->attach($category->id);
-                    $subject = $category->subject;
                     $student->subjects()->attach($subject->id);
                 }
             }
@@ -172,6 +172,27 @@ class StudentController extends Controller
         return response()->json(['message' => 'invalid data'] , 400) ;
         $student['name'] = $student->user()->first()->name ;
         return $student ;
+    }
+    public function all(){
+        return StudentDispalyResource::collection(Student::with('user')->get());
+    }
+    public function addAdmin(Request $request){
+        $request->validate([
+            'email' => 'required|email',
+            'name' => 'required' ,
+            'phone_number' => 'required'
+        ]) ;
+        $request['password'] = 'password' ;
+        $request['role'] = 'adminstrator' ;
+        DB::beginTransaction();
+        $user = User::create($request->all()) ;
+        // return $user ;
+        $admin = $user->adminstrator()->create($request->all()) ;
+        DB::commit();
+        return response()->json([
+            'message' => 'added successfully',
+            'admin' =>$admin
+        ],200);
     }
 }
 

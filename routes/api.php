@@ -28,6 +28,7 @@ use App\Http\Controllers\Student\TagController as StudentTagController;
 use App\Http\Controllers\Teacher\AuthController as TeacherAuthController;
 use App\Http\Controllers\Teacher\SubjectController;
 use App\Models\Problem;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use PhpOffice\PhpSpreadsheet\RichText\Run;
@@ -68,6 +69,7 @@ Route::group(['prefix' => 'adminstrator' , 'middleware' => ['auth:sanctum','admi
     Route::group(['prefix' => 'students'] , function(){
         Route::post('distribute' , [AdminStudentController::class , 'distributeCategories']);
     });
+    Route::post('add-admin' , [AdminStudentController::class , 'addAdmin']);
 
     Route::get('bank-problems', [ProblemController::class, 'showAdminBank']);
     Route::post('problems/add-problem' , [ProblemController::class, 'storeAdmin']);
@@ -156,6 +158,7 @@ Route::group(['prefix' => 'student' , 'middleware' => ['auth:sanctum','student']
         //        
     });
     Route::group(['prefix' => 'contests'] , function(){
+        Route::get('/allStudents' , [ContestController::class ,  'allStudents']);//postman
         Route::get('/all', [ContestController::class, 'index']);
         Route::get('/my', [ContestController::class, 'myContests']);
         Route::get('/',[ContestController::class ,  'show']);

@@ -16,11 +16,12 @@ class ContestFactory extends Factory
      */
     public function definition(): array
     {
+        
         return [
             'name' => $this->faker->word,
             'duration' => 2,
-            'start_at' => now()->format('y-m-d'),
-            'contest_time' => now()->format('H:i:s')
+            'start_at' => $this->faker->date,
+            'contest_time' => $this->faker->time
         ];
     }
 }
